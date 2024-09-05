@@ -21,12 +21,4 @@ class User:
                 file.write(user + '\n')
                 return True
 
-user1 = User()
-print(user1.setUsername('HELLO'))
-user2 = User()
-
-print(user2.setUsername('steve'))
-
-user3 = User()
-print(user3.setUsername('HELLO'))
 
