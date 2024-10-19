@@ -1,52 +1,37 @@
-import random
-language = []
-language += [chr(i) for i in range(65, 91)]
-language += [chr(i) for i in range(97, 123)]
-language += [chr(i) for i in range(48,58)]
+import bcrypt
 
 class User:
-    def __init__(self) -> None:
-        self.username = None
-        self.password = None
-        self.phone = None
-        self.email = None
-        self.password = None
+
+
+    def __init__(self, username, password) -> None:
+        
+        self.username = username
+        self.password = self.encrypt_password(password)
     
-    def setUsername(self, user):
-        try:
-            with open('usernames.txt', 'a+') as read:
-                read.seek(0)
-                usernames = read.readlines()
-                usernames = [user.strip() for user in usernames]
-                if user in usernames:
-                    return False
-                read.write(user + '\n')
-                return True
-        except FileNotFoundError:
-            with open(usernames.txt, 'w') as file:
-                file.write(user + '\n')
-                return True
-    
-    def set_password(self):
-        passw = input('Enter the password for the user')
-        self.password = self.encrypt_password(passw)
-
-
-    def create_key(self, string):
-        key = []
-        for i in range(len(string)):
-            key.append(random.randint(0, 62))
-        return key
-
     def encrypt_password(self, password):
-        key = create_key(password)
-        encrypted_word = ''
-        for i in range(len(key)):
-            new_index = (language.index(password[i]) + key[i]) % 62
-            encrypted_word += language[new_index]
-        return encrypted_word
 
+        # Generates a salt for this user instance, is regenerated everytime password is updated
+        self.salt = bcrypt.gensalt()
+        # Hashes the supplied password and salt returning the value, which will be stored in self.password 
+        encrypted = bcrypt.hashpw(password.encode(), self.salt)
+        return encrypted
 
+    def check_password(self, passattempt):
 
+        # Hashes the password supplied with the same salt as the original hashing.
+        # Compares the result with the stored hash value for that user instance, returns result.
+        if self.password == bcrypt.hashpw(passattempt.encode(), self.salt):
+            return True
+        
+        return False
+     
+    def update_password(self, oldpassword, newpassword):
 
-
+        # Checks if the oldpassword variable hashes to the same value as the stored password hash.
+        # Takes the new password variable and passes it into encryptpassword function.
+        # Sets the value of self.password as the value of that function
+        if self.check_password(oldpassword):
+            self.password = self.encrypt_password(newpassword)
+            return True
+        else:
+            return False
