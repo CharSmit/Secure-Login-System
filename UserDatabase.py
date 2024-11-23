@@ -42,3 +42,10 @@ def update_user_password(username, new_password_hash):
             (new_password_hash, username),
         )
         conn.commit()
+
+def existing_user(username):
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+        result = cursor.fetchone()
+        return result is not None

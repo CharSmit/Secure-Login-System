@@ -6,8 +6,10 @@ class User:
     def __init__(self, username, password) -> None:
         
         self.username = username
-        self.password = self.encrypt_password(password)
-    
+        if password:
+            self.password = self.encrypt_password(password)
+        else:
+            self.password = None
     def encrypt_password(self, password):
 
         
@@ -20,6 +22,8 @@ class User:
         Hashes the password supplied with the same salt as the original hashing.
         Compares the result with the stored hash value for that user instance, returns result.
         '''
+        if isinstance(self.password, str):
+            self.password = self.password.encode()
         return bcrypt.checkpw(passattempt.encode(), self.password)
             
         
@@ -35,6 +39,3 @@ class User:
             return True
         else:
             return False
-
-user = User("hello", "hello")
-print(user.check_password("hello"))
