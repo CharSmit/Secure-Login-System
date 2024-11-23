@@ -26,7 +26,7 @@ def add_user(username, password_hash):
         )
         conn.commit()
 
-#
+
 def get_user(username):
     with get_db_connection() as conn:
         cursor = conn.cursor()
