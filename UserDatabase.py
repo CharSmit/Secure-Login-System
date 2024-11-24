@@ -11,18 +11,20 @@ def initialize_database():
         cursor = conn.cursor()
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            username TEXT PRIMARY KEY,
-            password_hash TEXT
-        )
+        username TEXT UNIQUE PRIMARY KEY,
+        email TEXT UNIQUE,
+        password_hash TEXT
+
+        );
         """)
         conn.commit()
 
-def add_user(username, password_hash):
+def add_user(username, email, password_hash):
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO users (username, password_hash) VALUES (?, ?)",
-            (username, password_hash),
+            "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)",
+            (username, email, password_hash),
         )
         conn.commit()
 
